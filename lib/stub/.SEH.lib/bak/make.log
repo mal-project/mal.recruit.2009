@@ -1,0 +1,6 @@
+Sun 07/12/2009 - 22:38:51.20
+MASM=Z:\Programs\Development\RCE\Assemblers\MASM
+UPXPATH=Z:\Programs\Development\RCE\Tools\Packers
+PROJECT=Z:\Documents\Projects\Development\Assembler\rce\sources\kms\mal.recruit.2009\mal.recruit.2009.source\lib\stub\.SEH.lib
+COMMON=Z:\Documents\Projects\Development\Assembler\rce\sources\kms\mal.recruit.2009\mal.recruit.2009.source\lib\stub\.SEH.lib
+ Assembling: Z:\Documents\Projects\Development\Assembler\rce\sources\kms\mal.recruit.2009\mal.recruit.2009.source\lib\stub\.SEH.lib\seh.asm

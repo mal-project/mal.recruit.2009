@@ -1,0 +1,20 @@
+; ---------------------------------------------------------------------
+pushs   macro   argv:vararg
+    for param, <argv>
+        push    param
+    endm
+endm
+
+; ---------------------------------------------------------------------
+pops    macro   argv:vararg
+    for param, <argv>
+        pop param
+    endm
+endm
+
+; ---------------------------------------------------------------------
+xreps   macro   opcode:req, i:req
+    repeat i
+        opcode
+    endm
+endm

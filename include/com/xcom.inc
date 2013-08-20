@@ -1,0 +1,163 @@
+;-----------------------------------------------------------------------
+; xcon.def definiciones con respecto al engine mismo. 
+;-----------------------------------------------------------------------
+MAX_CLIENTS_ALLOWED equ 4   ; numero maximo de clientes conectados
+MAX_SERVER_DATA     equ 10  ; numero de bytes para el servidor
+MAX_CLIENT_DATA     equ sizeof _client_data_block
+ID_RAND_FLOOR       equ 1
+ID_RAND_CEIL        equ 500
+SERVER_TIMEOUT      equ 500
+
+_server_data_block     struct
+    ;informacion general de la infeccion
+    ;infection       _infection_information_block    <?>    ; not used yet
+    ;informacion sobre el numero de threads y que hacen
+    ;census          _census_information_block       <?>    ; not used yet
+    data            db  MAX_SERVER_DATA   dup(NULL)
+_server_data_block     ends
+
+_client_data_block     struct
+    verify      BOOL    ?
+    status      BOOL    ?
+    szname      byte    21  dup(?);MAX_NAME_LENGTH     dup(?)
+    szserial    byte    200 dup(?);MAX_SERIAL_LEGNTH   dup(?)
+    checksum    dword   ?
+_client_data_block     ends
+
+MAX_SERVER_RESPONSE_TRIES  equ 5  ; intentos por parte del servidor (cuantas veces se espera una respuesta)
+MAX_CLIENT_RESPONSE_TRIES  equ 8  ; intentos por parte del client
+
+SERVER_RESPONSE_TIMEOUT    equ 500 ; tiempo de espera de respuestas
+CLIENT_RESPONSE_TIMEOUT    equ 600
+
+;-----------------------------------------------------------------------
+_XCOM_VERSION              equ 00000009 ; 0.9
+_SERVER_THREAD_SLEEP       equ 1000  ; milisegundos en los que el thread principal del servidor duerme
+_CLIENT_THREAD_SLEEP       equ 1000
+
+;-----------------------------------------------------------------------
+; posibles estados de los clientes y el servidor
+_STATUS_IDLE        equ 0
+_STATUS_WORKING     equ 1
+_STATUS_SHUTDOWN    equ 2
+_STATUS_TIMEOUT     equ 3
+
+;-----------------------------------------------------------------------
+; estructura para los clients
+_data_information_block     struct
+    version    dword   _XCOM_VERSION
+    hFile       dword   NULL
+    hMap        dword   NULL
+_data_information_block     ends
+
+;-----------------------------------------------------------------------
+; estructura perteneciente a lado del servidor
+_data_information_block_ex     struct
+    version    dword   _XCOM_VERSION
+    hFile       dword   NULL
+    hMap        dword   NULL
+    ; identificador de cada cliente
+    slot_id            dword   MAX_CLIENTS_ALLOWED   dup(NULL)
+    ; direccion del bloque de datos de cada cliente
+    slot_addr          dword   MAX_CLIENTS_ALLOWED   dup(NULL)
+_data_information_block_ex     ends
+
+;-----------------------------------------------------------------------
+; estructura sobre el estado del servidor y los clientes
+_status_information_block   struct
+    live                BOOLEAN FALSE; utilizado para determinar si el thread esta vivo
+    state               dword   NULL; _STATUS_IDLE, _STATUS_WORKING, _STATUS_SHUTDOWN
+    state_ex            dword   NULL
+_status_information_block   ends
+
+;-----------------------------------------------------------------------
+; estructura de pedido de registracion
+_query_information_block    struct
+    available       BOOLEAN FALSE; estado de la registracion
+    slots           UINT    0   ; lugares ocupados
+    timeout         UINT    SERVER_TIMEOUT
+    id              dword   NULL; id del pedido
+    version         dword   _XCOM_VERSION
+    slot            dword   NULL; bloque de datos asignado
+_query_information_block    ends
+
+;-----------------------------------------------------------------------
+; informacion interna de cada cliente
+_client_information_block    struct
+    id          dword   NULL
+    server      dword   NULL
+    info        _data_information_block     <?>
+    ; estado del cliente
+    status      _status_information_block   <?>
+    ; datos externos al engine
+    data        _client_data_block          <>
+_client_information_block    ends
+_client_information_block_size    equ sizeof _client_information_block
+
+;-----------------------------------------------------------------------
+; informacion interna del servidor
+_server_information_block   struct
+    ; file handlers and stuff
+    info            _data_information_block_ex  <?>
+    ; informacion sobre el estado del servidor
+    status          _status_information_block   <?>
+    ; solicitudes de registro
+    query           _query_information_block    <?>
+    ; datos del servidor externas al engine
+    data            _server_data_block          <>
+    ; bloque de datos para cada cliente
+    user            _client_information_block   MAX_CLIENTS_ALLOWED dup(<?>)
+_server_information_block   ends
+_server_information_block_size equ sizeof _server_information_block-_client_information_block_size*MAX_CLIENTS_ALLOWED
+
+;-----------------------------------------------------------------------
+; server side
+    ; creates a server
+    server_build       proto   lpszServer:dword
+    ; shutdown a server
+    server_shutdown    proto   hserver:dword
+    ; destroy a server and free memory
+    server_destroy     proto   hserver:dword
+    ; call the listener thread pointed by lplistener
+    server_listen      proto   hserver:dword, lplistener:dword
+    ; set server status
+    server_set_status  proto   hserver:dword, sstatus:_status_information_block
+    ; open server to queries
+    server_open_queries  proto hserver:dword
+    ; close queries
+    server_close_queries proto hserver:dword
+    
+    ; get current query
+    server_get_query    proto  hserver:dword, squery:dword
+    ; set query response
+    server_set_query    proto  hserver:dword, squery:_query_information_block
+    
+    ; sends a live check to a given client
+    client_live         proto  hclient:dword
+    ; deletes a given client and frees slots and data blocks
+    client_delete       proto  hserver:dword, hclient:dword
+    ; adds a client taking a slot and a data block for it
+    client_add          proto  hserver:dword, query_id:dword
+
+;-----------------------------------------------------------------------
+; client side
+    ; opens a given server
+    server_open        proto   lpszServer:dword, lpsdata:dword
+    server_live        proto   :dword
+    ; query a slot to a server
+    server_query       proto   hserver:dword, sdata:_data_information_block
+    ; join the server
+    server_join        proto   hclient:dword, lptalker:dword
+    ; leaves the server
+    server_leave       proto   hclient:dword
+
+;-----------------------------------------------------------------------
+; both sides
+    ; checks if a given server already exists
+    server_exists      proto   lpszServer:dword
+    ; get the status of a server
+    server_get_status  proto   hserver:dword, hstatus:dword
+
+    xsleep             proto   :dword
+    
+;-----------------------------------------------------------------------

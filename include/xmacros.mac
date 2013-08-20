@@ -1,0 +1,70 @@
+;-----------------------------------------------------------------------
+includes    macro   incl:vararg
+            for i, <incl>
+                if  @InStr(1, <i>, <.>)
+                    if  @InStr(1, <i>, <.lib>)
+                        includelib  i
+                    else
+                        include     i
+                    endif
+                else
+                    include     i.inc
+                    includelib  i.lib
+                endif
+            endm
+endm
+;-----------------------------------------------------------------------
+
+hBIGs   macro   hbig:vararg
+    .data?
+    for i, <hbig>
+        i hBIG ?
+    endm
+endm
+
+;-----------------------------------------------------------------------
+hiword  macro   reg:req
+    mov     eax, reg
+    shr     eax, 16
+endm
+
+;-----------------------------------------------------------------------
+loword  macro   reg:req
+    mov     eax, reg
+    and     eax, 0FFFFh
+endm
+
+;-----------------------------------------------------------------------
+addm    macro   arg1:req, arg2:req
+    mov     eax, arg2
+    add     arg1, eax
+endm
+
+;-----------------------------------------------------------------------
+subm    macro   arg1:req, arg2:req
+    mov     eax, arg2
+    sub     arg1, eax
+endm
+
+;-----------------------------------------------------------------------
+pushs   macro   argv:vararg
+    for param, <argv>
+        push    param
+    endm
+endm
+
+;-----------------------------------------------------------------------
+pops    macro   argv:vararg
+    for param, <argv>
+        pop param
+    endm
+endm
+
+;-----------------------------------------------------------------------
+xreps   macro   opcode:req, i:req
+    repeat i
+        opcode
+    endm
+endm
+
+;-----------------------------------------------------------------------

@@ -1,0 +1,43 @@
+//----------------------------------------------------------------------
+#include    "resource.h"
+#include    "rsrc.id"
+
+//----------------------------------------------------------------------
+IDI_MAIN        ICON   DISCARDABLE "res\GFX\icon.ico"
+
+//----------------------------------------------------------------------
+IDR_MAIN        BITMAP DISCARDABLE "res\GFX\main.bmp"
+
+IDR_EXITUP      BITMAP DISCARDABLE "res\GFX\buttons/exit_up.bmp"
+IDR_EXITDOWN    BITMAP DISCARDABLE "res\GFX\buttons/exit_down.bmp"
+IDR_EXITOVER    BITMAP DISCARDABLE "res\GFX\buttons/exit_over.bmp"
+
+IDR_ABOUTUP     BITMAP DISCARDABLE "res\GFX\buttons/about_up.bmp"
+IDR_ABOUTDOWN   BITMAP DISCARDABLE "res\GFX\buttons/about_down.bmp"
+IDR_ABOUTOVER   BITMAP DISCARDABLE "res\GFX\buttons/about_over.bmp"
+
+//----------------------------------------------------------------------
+IDR_MUSIC       RCDATA DISCARDABLE "res\sfx\grave.xm"
+IDR_RGN         RCDATA DISCARDABLE "res\gfx\main.rgn"
+IDR_INFO        RCDATA DISCARDABLE "res\info.txt"
+
+//----------------------------------------------------------------------
+IDD_MAIN    DIALOGEX    0, 0, 320, 122
+FONT        7, "MS Sans Serif"
+STYLE       0x90000802
+EXSTYLE     0x00000088
+{
+    CONTROL     IDR_MAIN, 65335, STATIC, SS_BITMAP | SS_REALSIZEIMAGE, 0, 0, 200, 200 
+    CONTROL     "", IDE_SERIAL, EDIT, ES_CENTER | ES_AUTOHSCROLL | WS_TABSTOP, 60, 90, 240, 9
+    CONTROL     "", IDE_NAME, EDIT, ES_CENTER | ES_AUTOHSCROLL | WS_TABSTOP, 60, 80, 240, 9
+	
+}
+
+//----------------------------------------------------------------------
+IDD_SCROLLER DIALOGEX 	0, 0, 280, 150
+STYLE 	     DS_SYSMODAL | DS_CENTER | WS_POPUP | WS_VISIBLE
+FONT         7, "Terminal", 1, 0, 0
+{
+}
+
+//----------------------------------------------------------------------

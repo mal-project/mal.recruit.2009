@@ -1,0 +1,21 @@
+#define IDI_MAIN        100
+#define IDD_MAIN        200
+
+#define IDE_SERIAL      300
+#define IDE_NAME        301
+
+#define IDR_MAIN        399
+
+#define IDR_EXITUP      403
+#define IDR_EXITDOWN    404
+#define IDR_EXITOVER    405
+
+#define IDR_ABOUTUP     406
+#define IDR_ABOUTDOWN   407
+#define IDR_ABOUTOVER   408
+
+#define IDR_MUSIC       600
+#define IDR_RGN         601
+#define IDR_INFO        602
+
+#define IDD_SCROLLER    700
